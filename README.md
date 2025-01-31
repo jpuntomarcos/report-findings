@@ -20,7 +20,7 @@ Rscript report.R config.yaml
 
 ### Output
 
-The script generates an Excel file containing expected mutations and whether this mutations were found in samples. Columns meaning:
+The script generates an Excel file, `EvaluatedMutations.xlsx`, containing expected mutations and whether this mutations were found in samples. Columns meaning:
 
  - FoundInSample: `Yes` if the mutation was found in target sample
  - FoundInControl: `Yes` if the mutation was found in any Control sample
@@ -36,6 +36,7 @@ The script generates an Excel file containing expected mutations and whether thi
  - FIM: Despcription of Mut samples where the mutation was found. Within the parenthesis: n and pct. Resuls are sorted by pct, decreasing.
  - SampleFindings: Additional finding in the target sample. Describes the full events (i.e. "ins_17:43079334-43079399 del_9") that where identified in the target sample **within the range of interest**. Resuls are sorted by pct, decreasing.
 
+An additional Excel file is generated, `IgnoredEvents_Log.xlsx`,  to report isoforms supporting "n" for which some events where ignored due to size threshold.
 
 
 ### License
