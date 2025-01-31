@@ -1,3 +1,4 @@
+chromosome	start	end	exon_name	exon#	strand
 17	43125271	43125364	ENSE00001852567	1	-
 17	43125277	43125364	alt-UTR	1_dE1q6	-
 17	43125182	43125364	alt-UTR	1_nE1q89	-
