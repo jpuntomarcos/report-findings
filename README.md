@@ -35,3 +35,9 @@ The script generates an Excel file containing expected mutations and whether thi
  - FIC: Despcription of Control samples where the mutation was found. Within the parenthesis: n and pct. Resuls are sorted by pct, decreasing.
  - FIM: Despcription of Mut samples where the mutation was found. Within the parenthesis: n and pct. Resuls are sorted by pct, decreasing.
  - SampleFindings: Additional finding in the target sample. Describes the full events (i.e. "ins_17:43079334-43079399 del_9") that where identified in the target sample **within the range of interest**. Resuls are sorted by pct, decreasing.
+
+
+
+### License
+
+GPL 3.0 requires author attribution and ensures that any modifications or derivatives remain open-source under the same license.
