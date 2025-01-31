@@ -1,0 +1,39 @@
+sample	event	gene
+Mut1	del_4	BRCA1
+Mut1	4_dE4q22	BRCA1
+Mut1	del_3	BRCA1
+Mut2	del_20	BRCA2
+Mut2	del_19 del_20	BRCA2
+Mut2	ins_13:32371101-32371165	BRCA2
+Mut3	del_8	BRCA1
+Mut3	del_8 del_9	BRCA1
+Mut3	del_8 del_9 10_d10q	BRCA1
+Mut3	del_8 del_9 del_10	BRCA1
+Mut3	10_d10q	BRCA1
+Mut3	ins_17:43095923-43095942	BRCA1
+Mut3	del_8 10_d10q	BRCA1
+Mut3	del_9 10_d10q	BRCA1
+Mut3	del_9	BRCA1
+Mut4	del_13:32326244-32326282 del_7	BRCA2
+Mut4	del_3 del_5	BRCA2
+Mut4	del_3 del_4 del_5	BRCA2
+Mut4	ins_13:32326083-32326100	BRCA2
+Mut4	del_4 del_5 del_6 del_7	BRCA2
+Mut4	del_5	BRCA2
+Mut4	del_5 del_6 del_7	BRCA2
+Mut4	del_6 del_7	BRCA2
+Mut5	del_25	BRCA2
+Mut6	del_18	BRCA2
+Mut6	del_17 del_18	BRCA2
+Mut8	del_8 del_10	BRCA1
+Mut8	del_9 del_10	BRCA1
+Mut8	del_10 del_11	BRCA1
+Mut8	del_8 del_9 del_10 del_11	BRCA1
+Mut8	del_8	BRCA1
+Mut8	del_8 del_9	BRCA1
+Mut8	del_8 del_9 del_10	BRCA1
+Mut8	del_8 del_9 10_d10q	BRCA1
+Mut8	del_10	BRCA1
+Mut8	10_d10q	BRCA1
+Mut8	del_9	BRCA1
+Mut9	del_22	BRCA1
