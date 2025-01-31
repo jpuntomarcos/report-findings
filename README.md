@@ -38,9 +38,10 @@ The script generates an Excel file, `EvaluatedMutations.xlsx`, containing expect
 
 An additional Excel file is generated, `IgnoredEvents_Log.xlsx`,  to report isoforms supporting "n" for which some events where ignored due to size threshold.
 
-### Minor known issue
+### Minor known issues
 
-When reporting events, the code will report labels (i.e. 12_dE12p3) instead of regions (i.e. 17:43082404-43082572) when the event perfectly match the known exon (as defined in the exon files). However, It currently does not work for alternative exons greater than the canonical one (i.e. 1_nE1q89). It's not a conflicting issue because current regions/ranges of interest do not span 1_nE1q89 and 1_nE1q536. Anyway, in this cases the code would report the full genomic instead of the label.
+ - When reporting events, the code will report labels (i.e. 12_dE12p3) instead of regions (i.e. 17:43082404-43082572) when the event perfectly match the known exon (as defined in the exon files). However, It currently does not work for alternative exons greater than the canonical one (i.e. 1_nE1q89). It's not a conflicting issue because current regions/ranges of interest do not span 1_nE1q89 and 1_nE1q536. Anyway, in this cases the code would report the full genomic instead of the label.
+ - Current implementation takes 5-60 minutes, depending on the number of isoforms to process.
 
 ### License
 
