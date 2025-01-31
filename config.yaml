@@ -1,0 +1,14 @@
+#This file contains all the parameters needed to execute report.R
+
+# INPUT
+BRCA1_exons: input/BRCA1_exon_info.txt
+BRCA2_exons: input/BRCA2_exon_info.txt
+events_to_evaluate: input/ExpectedEvents.csv  # Known events to evaluate
+ranges_to_evaluate: input/RangesToExplore.csv  # Ranges to evaluate
+ulf_count_paths: input/UlfCountsOutput.csv # File defining counts paths obtained through comb_and_sort_annotation_counts.py script
+
+# Output dir
+output_dir: output
+
+# Other
+events_to_ignore_threshold: 5 # Events equal o smaller than this threshold will be ignored except those already defined in the exons file, like 7_dE7p3
