@@ -13,7 +13,7 @@ Post-processing code to report events from ENIGMA BRCA1/BRCA2 long read project:
 git clone https://github.com/jpuntomarcos/report-findings.git
 ```
 
-2. **Configure config.yaml** to define input. Only two parameters require full attention:
+2. **Configure config.yaml** to define input. Only two parameters require **full attention**:
    - `ulf_count_paths`: to define paths to Ulf's step 2 output.
    - `events_to_ignore_threshold`. Events equal o smaller than this threshold will be ignored except those already defined in the exons file, like 7_dE7p3
   
