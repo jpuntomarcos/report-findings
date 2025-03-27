@@ -18,7 +18,6 @@ if (!grepl("\\.yaml$", args, ignore.case = TRUE)) {
 paramsFileName <- args[1]
 
 
- 
 # INITIAL VARS ---
 
 # load libs
@@ -75,6 +74,9 @@ for (gene in genes){
   # Build exons-data object and GR format
   exons <- Exons$new(gene,  params[[paste0(gene, "_exons")]])  
   exonsGR <- exons$getAllExonsGR()
+  geneGR <- GRanges(seqnames = unique(seqnames(exonsGR)),
+                        ranges = IRanges(start = min(start(exonsGR)),
+                                         end = max(end(exonsGR))))
   canonicalExonsGR <- exons$getCanonicalExonsGR()
   aberrantGaps <- exons$getAberrantGaps()
 
@@ -83,13 +85,27 @@ for (gene in genes){
   samples = list()  # list of samples. Keys: sample names. Values: data.frame containing counts (Ulf's 2nd script output)
   for (s in samplesIds){
     f <- countPathsDF[countPathsDF$sample == s & countPathsDF$gene == gene, "path"]
-    samples[[s]] <- read.table(f, sep = "\t", stringsAsFactors = F, header = F, col.names = c("id", "count", "regions"))
+    isoDF <- read.table(f, sep = "\t", stringsAsFactors = F, header = F, col.names = c("id", "count", "regions"))
+    
+    # remove isoforms with NA
+    idxToRemove <- which(isoDF$regions == "N/A")
+    cat("\nWarning: N/As were found in", basename(f), "and will not be included in the analysis")
+    isoDF <- isoDF[-idxToRemove,]
+    
+    # Remove isoforms that do not overlap the gene
+    isoGRList <- lapply(strsplit(isoDF$regions, ", "), isoformToGR, exonsGR) # Convert isoforms to GRanges once
+    overlapGene <- vapply(isoGRList, function(isoGR) overlapsAny(geneGR, isoGR), logical(1))
+    isoDF <- isoDF[which(overlapGene == T), ]  # Keep only those overlapping the gene
+    
+    # Assign
+    samples[[s]] <- isoDF
     allIsos <- c(allIsos, samples[[s]]$regions)
   }
 
+    
   # keep only unique isoforms
   allIsos <- unique(allIsos)
-
+  
   # Build isoform dictionary. Items are objects with events and isoform in GR format
   allIsosDict <- sapply(allIsos,  function(isoform){
     getAbnormalities(isoformStr = isoform,
@@ -159,8 +175,7 @@ for (gene in genes){
         
         # If code reachs here: isoform is included in denominator
         d <- d + isoDF$count[j]
-        isoFirstPart <- strsplit(isoDF$id[j], "-")[[1]][1]
-        suppIso_d <- paste(suppIso_d, isoFirstPart)
+        suppIso_d <- paste(suppIso_d, isoDF$id[j])
         
         
         # Cond 2: contains target event and does not contain any new event in the regions
@@ -203,13 +218,13 @@ for (gene in genes){
         
         # Success: add n
         n <- n + isoDF$count[j]
-        suppIso <- paste(suppIso, isoFirstPart)
+        suppIso <- paste(suppIso, isoDF$id[j])
         
         # Report ignored events for target sample
         if (s == sName){
           concat_str <- paste(c(auxFormatRows(isoObj$ignoredIns), auxFormatRows(isoObj$ignoredDels)), collapse = ", ")
           if (nchar(concat_str)> 0){
-            ignoredLogDF$FIS_n.isoformsWithIgnoredEvents[i] <- paste(ignoredLogDF$FIS_n.isoformsWithIgnoredEvents[i], paste0("(", isoFirstPart, ", ", concat_str, ") ")) 
+            ignoredLogDF$FIS_n.isoformsWithIgnoredEvents[i] <- paste(ignoredLogDF$FIS_n.isoformsWithIgnoredEvents[i], paste0("(", isoDF$id[j], ", ", concat_str, ") ")) 
             ignoredLogDF$count[i] <- ignoredLogDF$count[i] + isoDF$count[j]
           }  
         }
