@@ -41,7 +41,7 @@ getAbnormalities <- function(isoformStr, exonsGR, canonicalExonsGR, aberrantGaps
   exonsDF <- as.data.frame(exonsGR)
   
   # transform isoform into GRanges
-  isoformRegionsGR <- isoformToGR(isoformStr, exonsGR)
+  isoformRegionsGR <- isoformToGR(isoform = isoformStr, exonsGR)
   
   # Calculate min-max for later use
   if (is.null(minMaxGR)){
@@ -154,18 +154,17 @@ isoformToGR <- function(isoform, exonsGR){
   chr <- seqnames(exonsGR)[1]
   isoformRegionsGR <- exonsGR[exonsGR$`exon#` %in% isoform, ]
   
-  
   aberrantEvents <- setdiff(isoform, exonsGR$`exon#`)
   # Convert aberrantEvents to GRanges in a vectorized manner
   if (length(aberrantEvents) > 0) {
-    splitRanges <- do.call(rbind, strsplit(aberrantEvents, "-"))
+    splitRanges <- do.call(rbind, strsplit(aberrantEvents, ":|-"))
     aberrantGR <- GRanges(
-      seqnames = chr,
-      ranges = IRanges(start = as.numeric(splitRanges[, 1]), end = as.numeric(splitRanges[, 2]))
+      seqnames = splitRanges[, 1],
+      ranges = IRanges(start = as.numeric(splitRanges[, 2]), end = as.numeric(splitRanges[, 3]))
     )
     
     # Combine GRanges
-    isoformRegionsGR <- c(isoformRegionsGR, aberrantGR)  
+    isoformRegionsGR <- suppressWarnings(c(isoformRegionsGR, aberrantGR))
   }
   
   
@@ -173,7 +172,7 @@ isoformToGR <- function(isoform, exonsGR){
 }
 
 
-# Converts isoform from GRanges to str like 1, 2, 3, 43079334-43079399
+# Converts isoform from GRanges to str like 1, 2, 3, 17:43079334-43079399
 fromIsoformGRtoIsoformStr <- function(isoGR){
   
   # Compose isoform getting official exon names
@@ -182,7 +181,7 @@ fromIsoformGRtoIsoformStr <- function(isoGR){
   # Add unknown regions
   abDF <- as.data.frame(isoGR[is.na(isoGR$`exon#`)], row.names = NULL)
   for (k in seq_len(nrow(abDF))){
-    abEv <- paste0(abDF$start[k], "-", abDF$end[k])
+    abEv <- paste0(abDF$seqnames[k], ":", abDF$start[k], "-", abDF$end[k])
     if (isoformStr == ""){
       isoformStr <- abEv
     } else {
