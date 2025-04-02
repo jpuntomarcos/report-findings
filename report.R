@@ -32,7 +32,7 @@ params <- yaml.load_file(paramsFileName)
 
 # other vars
 outputDir <- params$output_dir
-dir.create(outputDir)
+dir.create(outputDir, recursive = T)
 
 
 # SCRIPT ----
