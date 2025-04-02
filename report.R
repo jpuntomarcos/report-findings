@@ -75,22 +75,25 @@ for (gene in genes){
   exons <- Exons$new(gene,  params[[paste0(gene, "_exons")]])  
   exonsGR <- exons$getAllExonsGR()
   geneGR <- GRanges(seqnames = unique(seqnames(exonsGR)),
-                        ranges = IRanges(start = min(start(exonsGR)),
-                                         end = max(end(exonsGR))))
+                    ranges = IRanges(start = min(start(exonsGR)),
+                                     end = max(end(exonsGR))))
   canonicalExonsGR <- exons$getCanonicalExonsGR()
   aberrantGaps <- exons$getAberrantGaps()
-
+  
   # Read all unique isoforms from samples
   allIsos <- NULL
   samples = list()  # list of samples. Keys: sample names. Values: data.frame containing counts (Ulf's 2nd script output)
   for (s in samplesIds){
+    
     f <- countPathsDF[countPathsDF$sample == s & countPathsDF$gene == gene, "path"]
     isoDF <- read.table(f, sep = "\t", stringsAsFactors = F, header = F, col.names = c("id", "count", "regions"))
     
     # remove isoforms with NA
     idxToRemove <- which(isoDF$regions == "N/A")
-    cat("\nWarning: N/As were found in", basename(f), "and will not be included in the analysis")
-    isoDF <- isoDF[-idxToRemove,]
+    if (length(idxToRemove) > 0){
+      cat("\nWarning: N/As were found in", basename(f), "and will not be included in the analysis")  
+      isoDF <- isoDF[-idxToRemove,]
+    }
     
     # Remove isoforms that do not overlap the gene
     isoGRList <- lapply(strsplit(isoDF$regions, ", "), isoformToGR, exonsGR) # Convert isoforms to GRanges once
@@ -101,8 +104,8 @@ for (gene in genes){
     samples[[s]] <- isoDF
     allIsos <- c(allIsos, samples[[s]]$regions)
   }
-
-    
+  
+  
   # keep only unique isoforms
   allIsos <- unique(allIsos)
   
@@ -118,7 +121,7 @@ for (gene in genes){
   
   
   # 2 - Report ----
-
+  
   
   # Fill report data.frame
   for (i in seq_len(nrow(evaluateDF))){
@@ -129,7 +132,7 @@ for (gene in genes){
     }
     
     sName <- evaluateDF$sample[i]
-
+    
     # Split event if necessary
     expectedFullEvent <- evaluateDF$event[i]
     expectedEventItems <- strsplit(expectedFullEvent, "\\ ")[[1]]
@@ -150,14 +153,14 @@ for (gene in genes){
       
       # Retrieve counts
       isoDF <- samples[[s]]
-
+      
       # calculate n: find all sample isoforms containing the target event
       n <- 0  # isoform quantification
       suppIso <- "" # Concat iso ids supporting n
       d <- 0 # denominator: any isoform meeting cond 1 (start and end should be contained)
       suppIso_d <- ""  # Concat iso ids supporting d
       for (j in seq_len(nrow(isoDF))){
-       
+        
         # Convert whole isoform into GR and limit it to the evaluated range
         isoformGR <- allIsosDict[[isoDF$regions[j]]]$GR # try to find it in dict
         if (is.null(isoformGR)){
@@ -188,11 +191,11 @@ for (gene in genes){
         sEvents <- isoObj$events # try to find in the dict
         if (is.null(sEvents)){
           isoObj <- getAbnormalities(isoformStr = isoformLim,
-                                  minMaxGR = limGR,
-                                  exonsGR =  exonsGR,
-                                  canonicalExonsGR = canonicalExonsGR,
-                                  aberrantGaps = aberrantGaps,
-                                  lengthTreshold = params$events_to_ignore_threshold)
+                                     minMaxGR = limGR,
+                                     exonsGR =  exonsGR,
+                                     canonicalExonsGR = canonicalExonsGR,
+                                     aberrantGaps = aberrantGaps,
+                                     lengthTreshold = params$events_to_ignore_threshold)
           sEvents <- isoObj$events
           isosDict[[isoformKey]] <- isoObj  # save 
         }
@@ -252,7 +255,7 @@ for (gene in genes){
       
       # If iso has some quantification
       if (n > 0){
-      
+        
         # Final annotation 
         if (s == sName){ # If target sample
           
@@ -278,7 +281,7 @@ for (gene in genes){
           }
         }
       }
-
+      
     }
     
     
@@ -305,7 +308,7 @@ for (sample in unique(evaluateDF$sample)){
   
   # Build final str
   eventStr <- paste0(sample, ": ", sortEventStr(paste0(events, collapse = "  |  ")))
-         
+  
   # Clean findings column and store new value
   evaluateDF[evaluateDF$sample == sample, "SampleFindings"] <- " "
   evaluateDF[which(evaluateDF$sample == sample)[1], "SampleFindings"] <- eventStr
@@ -322,8 +325,7 @@ end.time <- Sys.time()
 cat("\nTotal time: ", round(difftime(end.time, start.time, units = "h"), 2), "h")
 
 # Write results
-openxlsx::write.xlsx(evaluateDF, file.path(outputDir, "EvaluatedMutations.xlsx"))
-openxlsx::write.xlsx(ignoredLogDF, file.path(outputDir, "IgnoredEvents_Log.xlsx"))
-
+openxlsx::write.xlsx(evaluateDF, file.path(outputDir, paste0("EvaluatedMutations_", params$output_suffix, ".xlsx")))
+openxlsx::write.xlsx(ignoredLogDF, file.path(outputDir, paste0("IgnoredEventsLog_", params$output_suffix, ".xlsx")))
 
 
