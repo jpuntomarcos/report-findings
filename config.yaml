@@ -7,8 +7,10 @@ events_to_evaluate: input/ExpectedEvents.csv  # Known events to evaluate
 ranges_to_evaluate: input/RangesToExplore.csv  # Ranges to evaluate
 ulf_count_paths: input/UlfCountsOutput.csv # File defining counts paths obtained through comb_and_sort_annotation_counts.py script
 
-# Output dir
+# Output
 output_dir: output
+output_suffix: MyProject  # adds suffix to output file names
+
 
 # Other
 events_to_ignore_threshold: 5 # Events equal o smaller than this threshold will be ignored except those already defined in the exons file, like 7_dE7p3
